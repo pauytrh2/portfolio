@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'Source Code Pro', monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #terminal-container {
+      width: 90%;
+      max-width: 900px;
+      height: 90%;
+      border-radius: 8px;
+      background: #1e1e1e;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #terminal-header {
+      background: #2b2b2b;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      color: #d4d4d4;
+      font-size: 14px;
+    }
+    #terminal-header span {
+      margin-left: 10px;
+      font-weight: bold;
+    }
+    #terminal-header .buttons {
+      display: flex;
+      gap: 5px;
+    }
+    #terminal-header .button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    #terminal-header .close {
+      background: #e06c75;
+    }
+    #terminal-header .minimize {
+      background: #e5c07b;
+    }
+    #terminal-header .maximize {
+      background: #98c379;
+    }
+    #terminal-body {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    #input-line {
+      display: flex;
+      align-items: center;
+    }
+    #input-line #cursor {
+      display: inline-block;
+      width: 1px;
+      height: 20px;
+      background: #d4d4d4;
+      margin-left: 5px;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+      50% {
+        background: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal-container">
+    <div id="terminal-header">
+      <div class="buttons">
+        <div class="button close"></div>
+        <div class="button minimize"></div>
+        <div class="button maximize"></div>
+      </div>
+      <span>Pauyminal</span>
+    </div>
+    <div id="terminal-body">
+      <div id="output">Welcome to My Portfolio terminal! Type <b>help</b> to get started.</div>
+      <div id="input-line">viewer@portfolio:~$ <span id="input"></span><span id="cursor"></span></div>
+    </div>
+  </div>
+
+  <script>
+    const terminalBody = document.getElementById('terminal-body');
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const commands = {
+      help: '\nAvailable commands: about, projects, skills, contact, clear',
+      about: '\nI am a passionate developer with a love for coding.',
+      projects: '\n1. Project One\n2. Project Two\n3. Project Three',
+      skills: '\nHTML, CSS, JavaScript, Python, Linux',
+      contact: '\nEmail: me@example.com\nGitHub: github.com/myprofile',
+    };
+
+    function typeOutText(text, element) {
+      let index = 0;
+      element.innerHTML = '';
+      const interval = setInterval(() => {
+        element.innerHTML += text[index];
+        index++;
+        if (index === text.length) {
+          clearInterval(interval);
+        }
+      }, 25); //delay between chars
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key.length === 1) {
+        input.textContent += e.key;
+      } else if (e.key === 'Enter') {
+        const command = input.textContent.trim();
+        output.innerHTML += `\nviewer@portfolio:~$ ${command}`;
+        
+        if (command === 'clear') {
+          output.innerHTML = '';
+        } else if (commands[command]) {
+          typeOutText(commands[command], output);
+        } else {
+          typeOutText('Unknown command. Type "help" for a list of commands.', output);
+        }
+        
+        input.textContent = '';
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+      } else if (e.key === 'Backspace') {
+        input.textContent = input.textContent.slice(0, -1);
+      }
+    });
+  </script>
+</body>
+</html>
