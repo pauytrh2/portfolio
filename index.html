@@ -104,24 +104,40 @@
     const terminalBody = document.getElementById('terminal-body');
     const input = document.getElementById('input');
     const output = document.getElementById('output');
+
+    // Commands with a default 'repos' mock for now
     const commands = {
-      help: '\nAvailable commands: about, projects, skills, contact, clear',
+      help: '\nAvailable commands: about, projects, skills, contact, repos, clear',
       about: '\nI am a passionate developer with a love for coding.',
       projects: '\n1. Project One\n2. Project Two\n3. Project Three',
       skills: '\nHTML, CSS, JavaScript, Python, Linux',
       contact: '\nEmail: me@example.com\nGitHub: github.com/myprofile',
+      clear: '',
     };
 
-    function typeOutText(text, element) {
-      let index = 0;
-      element.innerHTML = '';
-      const interval = setInterval(() => {
-        element.innerHTML += text[index];
-        index++;
-        if (index === text.length) {
-          clearInterval(interval);
-        }
-      }, 25); //delay between chars
+    // GitHub username for fetching repos
+    const githubUsername = 'pauytrh2'; // Replace with your GitHub username
+
+    // Function to fetch and display GitHub repos
+    function fetchRepos() {
+      fetch(`https://api.github.com/users/${githubUsername}/repos`)
+        .then(response => response.json())
+        .then(data => {
+          if (data && Array.isArray(data)) {
+            const repos = data.map(repo => {
+              // Create a clickable link for each repo
+              return `<a href="https://github.com/${githubUsername}/${repo.name}" target="_blank">${repo.name}</a>`;
+            }).join('\n');
+            output.innerHTML += `\nListing repositories:\n${repos}`;
+          } else {
+            output.innerHTML += '\nNo repositories found.';
+          }
+          terminalBody.scrollTop = terminalBody.scrollHeight;
+        })
+        .catch(error => {
+          output.innerHTML += '\nError fetching repositories.';
+          terminalBody.scrollTop = terminalBody.scrollHeight;
+        });
     }
 
     window.addEventListener('keydown', (e) => {
@@ -130,15 +146,15 @@
       } else if (e.key === 'Enter') {
         const command = input.textContent.trim();
         output.innerHTML += `\nviewer@portfolio:~$ ${command}`;
-        
         if (command === 'clear') {
-          output.innerHTML = '';
+          output.innerHTML = ''; // Clear the terminal output
+        } else if (command === 'repos') {
+          fetchRepos(); // Fetch and display repos when 'repos' command is typed
         } else if (commands[command]) {
-          typeOutText(commands[command], output);
+          output.innerHTML += `\n${commands[command]}`;
         } else {
-          typeOutText('Unknown command. Type "help" for a list of commands.', output);
+          output.innerHTML += '\nUnknown command. Type "help" for a list of commands.';
         }
-        
         input.textContent = '';
         terminalBody.scrollTop = terminalBody.scrollHeight;
       } else if (e.key === 'Backspace') {
