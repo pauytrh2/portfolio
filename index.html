@@ -105,7 +105,6 @@
     const input = document.getElementById('input');
     const output = document.getElementById('output');
 
-    // Commands with a default 'repos' mock for now
     const commands = {
       help: '\nAvailable commands: about, projects, skills, contact, repos, clear',
       about: '\nI am a passionate developer with a love for coding.',
@@ -115,17 +114,14 @@
       clear: '',
     };
 
-    // GitHub username for fetching repos
-    const githubUsername = 'pauytrh2'; // Replace with your GitHub username
+    const githubUsername = 'pauytrh2';
 
-    // Function to fetch and display GitHub repos
     function fetchRepos() {
       fetch(`https://api.github.com/users/${githubUsername}/repos`)
         .then(response => response.json())
         .then(data => {
           if (data && Array.isArray(data)) {
             const repos = data.map(repo => {
-              // Create a clickable link for each repo
               return `<a href="https://github.com/${githubUsername}/${repo.name}" target="_blank">${repo.name}</a>`;
             }).join('\n');
             output.innerHTML += `\nListing repositories:\n${repos}`;
@@ -147,9 +143,9 @@
         const command = input.textContent.trim();
         output.innerHTML += `\nviewer@portfolio:~$ ${command}`;
         if (command === 'clear') {
-          output.innerHTML = ''; // Clear the terminal output
+          output.innerHTML = '';
         } else if (command === 'repos') {
-          fetchRepos(); // Fetch and display repos when 'repos' command is typed
+          fetchRepos();
         } else if (commands[command]) {
           output.innerHTML += `\n${commands[command]}`;
         } else {
